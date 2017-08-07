@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["jivanovic@renderedtext.com"]
 
   spec.summary       = %q{Client for Semaphore's API.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.homepage      = "https://github.com/renderedtext/semaphore-client"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
