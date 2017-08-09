@@ -1,41 +1,18 @@
-# SemaphoreClient
+# Semaphore Client
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/semaphore_client`. To experiment with that code, run `bin/console` for an interactive prompt.
+[![Build Status](https://semaphoreci.com/api/v1/projects/a07c1244-d53a-462d-9c3b-0794881935df/1452738/badge.svg)](https://semaphoreci.com/renderedtext/semaphore-client)
 
-TODO: Delete this and the text above, and describe your gem
+![Semaphore logo](https://d1dkupr86d302v.cloudfront.net/assets/application_bootstrap/layout/semaphore-logo-a6d954e176b6975b511f314a0cc808dc94a8030210077e3a6e904fbe69dc5354.svg)
 
-## Installation
+Semaphore Client is used to access Semaphore's API v2.
 
-Add this line to your application's Gemfile:
+For more info about Semaphore see <https://www.semaphoreci.com>
 
-```ruby
-gem 'semaphore_client'
-```
+For more info about Semaphore's API v2 see
+<http://semaphoreci.com/docs/api-v2-overview.html>
 
-And then execute:
+## Issues
 
-    $ bundle
+For problems directly related to the Client, [add an issue on GitHub](https://github.com/renderedtext/semaphore-client/issues/new).
 
-Or install it yourself as:
-
-    $ gem install semaphore_client
-
-## Usage
-
-TODO: Write usage instructions here
-
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/semaphore_client. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
-
-
-## License
-
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
+For other issues, [submit a support ticket](https://semaphoreci.com/support).
