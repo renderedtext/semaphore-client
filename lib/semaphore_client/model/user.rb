@@ -34,7 +34,7 @@ class SemaphoreClient
       private
 
       def symbolize_keys(hash)
-        hash.map { |key, value| [key.to_sym, value] }.to_h
+        Hash[hash.map { |key, value| [key.to_sym, value] }]
       end
     end
   end
