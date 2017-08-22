@@ -1,6 +1,7 @@
 require "json"
 require "securerandom"
 require "faraday"
+require "logger"
 
 require "semaphore_client/version"
 require "semaphore_client/exceptions"
