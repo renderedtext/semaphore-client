@@ -1,4 +1,6 @@
 require "json"
+require "securerandom"
+require "faraday"
 
 require "semaphore_client/version"
 require "semaphore_client/exceptions"
@@ -22,10 +24,13 @@ class SemaphoreClient
   API_URL = "https://api.semaphoreci.com"
   API_VERSION = "v2"
 
-  def initialize(auth_token, api_url = API_URL, api_version = API_VERSION)
+  def initialize(auth_token, options = {})
     @auth_token = auth_token
-    @api_url = api_url
-    @api_version = api_version
+
+    @api_url     = options.fetch(:api_url, API_URL)
+    @api_version = options.fetch(:api_version, API_VERSION)
+    @verbose     = options.fetch(:verbose, false)
+    @logger      = options.fetch(:logger, Logger.new(STDOUT))
   end
 
   def users
@@ -59,6 +64,6 @@ class SemaphoreClient
   private
 
   def http_client
-    @http_client ||= SemaphoreClient::HttpClient.new(@auth_token, @api_url, @api_version)
+    @http_client ||= SemaphoreClient::HttpClient.new(@auth_token, @api_url, @api_version, @verbose, @logger)
   end
 end
