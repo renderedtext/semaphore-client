@@ -5,8 +5,8 @@ class SemaphoreClient
         @http_client = http_client
       end
 
-      def list_for_org(org_id)
-        list_for_org!(org_id)
+      def list_for_org(org_id, query = nil)
+        list_for_org!(org_id, query)
       rescue SemaphoreClient::Exceptions::RequestFailed
       end
 
@@ -30,18 +30,20 @@ class SemaphoreClient
       rescue SemaphoreClient::Exceptions::RequestFailed
       end
 
-      def list_for_project(project_id)
-        list_for_project!(project_id)
+      def list_for_project(project_id, query = nil)
+        list_for_project!(project_id, query)
       rescue SemaphoreClient::Exceptions::RequestFailed
       end
 
-      def list_for_shared_config(shared_config_id)
-        list_for_shared_config!(shared_config_id)
+      def list_for_shared_config(shared_config_id, query = nil)
+        list_for_shared_config!(shared_config_id, query)
       rescue SemaphoreClient::Exceptions::RequestFailed
       end
 
-      def list_for_org!(org_id)
-        response = @http_client.get([:orgs, org_id, :teams])
+      def list_for_org!(org_id, query = nil)
+        query_string = query.nil? ? nil : "?#{query}"
+
+        response = @http_client.get([:orgs, org_id, :teams, query_string].compact)
 
         assert_response_status(response, 200)
 
@@ -88,8 +90,10 @@ class SemaphoreClient
         SemaphoreClient::Model::Team.load(content)
       end
 
-      def list_for_project!(project_id)
-        response = @http_client.get([:projects, project_id, :teams])
+      def list_for_project!(project_id, query = nil)
+        query_string = query.nil? ? nil : "?#{query}"
+
+        response = @http_client.get([:projects, project_id, :teams, query_string].compact)
 
         assert_response_status(response, 200)
 
@@ -100,8 +104,10 @@ class SemaphoreClient
         end
       end
 
-      def list_for_shared_config!(shared_config_id)
-        response = @http_client.get([:shared_configs, shared_config_id, :teams])
+      def list_for_shared_config!(shared_config_id, query = nil)
+        query_string = query.nil? ? nil : "?#{query}"
+
+        response = @http_client.get([:shared_configs, shared_config_id, :teams, query_string].compact)
 
         assert_response_status(response, 200)
 

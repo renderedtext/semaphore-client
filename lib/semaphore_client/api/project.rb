@@ -5,13 +5,13 @@ class SemaphoreClient
         @http_client = http_client
       end
 
-      def list_for_org(org_id)
-        list_for_org!(org_id)
+      def list_for_org(org_id, query = nil)
+        list_for_org!(org_id, query)
       rescue SemaphoreClient::Exceptions::RequestFailed
       end
 
-      def list_for_team(team_id)
-        list_for_team!(team_id)
+      def list_for_team(team_id, query = nil)
+        list_for_team!(team_id, query)
       rescue SemaphoreClient::Exceptions::RequestFailed
       end
 
@@ -25,13 +25,15 @@ class SemaphoreClient
       rescue SemaphoreClient::Exceptions::RequestFailed
       end
 
-      def list_for_shared_config(shared_config_id)
-        list_for_shared_config!(shared_config_id)
+      def list_for_shared_config(shared_config_id, query = nil)
+        list_for_shared_config!(shared_config_id, query)
       rescue SemaphoreClient::Exceptions::RequestFailed
       end
 
-      def list_for_org!(org_id)
-        response = @http_client.get([:orgs, org_id, :projects])
+      def list_for_org!(org_id, query = nil)
+        query_string = query.nil? ? nil : "?#{query}"
+
+        response = @http_client.get([:orgs, org_id, :projects, query_string].compact)
 
         assert_response_status(response, 200)
 
@@ -42,8 +44,10 @@ class SemaphoreClient
         end
       end
 
-      def list_for_team!(team_id)
-        response = @http_client.get([:teams, team_id, :projects])
+      def list_for_team!(team_id, query = nil)
+        query_string = query.nil? ? nil : "?#{query}"
+
+        response = @http_client.get([:teams, team_id, :projects, query_string].compact)
 
         assert_response_status(response, 200)
 
@@ -66,8 +70,10 @@ class SemaphoreClient
         assert_response_status(response, 204)
       end
 
-      def list_for_shared_config!(shared_config_id)
-        response = @http_client.get([:shared_configs, shared_config_id, :projects])
+      def list_for_shared_config!(shared_config_id, query = nil)
+        query_string = query.nil? ? nil : "?#{query}"
+
+        response = @http_client.get([:shared_configs, shared_config_id, :projects, query_string].compact)
 
         assert_response_status(response, 200)
 

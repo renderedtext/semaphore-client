@@ -5,8 +5,8 @@ class SemaphoreClient
         @http_client = http_client
       end
 
-      def list_for_project(project_id)
-        list_for_project!(project_id)
+      def list_for_project(project_id, query = nil)
+        list_for_project!(project_id, query)
       rescue SemaphoreClient::Exceptions::RequestFailed
       end
 
@@ -20,8 +20,8 @@ class SemaphoreClient
       rescue SemaphoreClient::Exceptions::RequestFailed
       end
 
-      def list_for_shared_config(shared_config_id)
-        list_for_shared_config!(shared_config_id)
+      def list_for_shared_config(shared_config_id, query = nil)
+        list_for_shared_config!(shared_config_id, query)
       rescue SemaphoreClient::Exceptions::RequestFailed
       end
 
@@ -45,8 +45,10 @@ class SemaphoreClient
       rescue SemaphoreClient::Exceptions::RequestFailed
       end
 
-      def list_for_project!(project_id)
-        response = @http_client.get([:projects, project_id, :config_files])
+      def list_for_project!(project_id, query = nil)
+        query_string = query.nil? ? nil : "?#{query}"
+
+        response = @http_client.get([:projects, project_id, :config_files, query_string].compact)
 
         assert_response_status(response, 200)
 
@@ -69,8 +71,10 @@ class SemaphoreClient
         assert_response_status(response, 204)
       end
 
-      def list_for_shared_config!(shared_config_id)
-        response = @http_client.get([:shared_configs, shared_config_id, :config_files])
+      def list_for_shared_config!(shared_config_id, query = nil)
+        query_string = query.nil? ? nil : "?#{query}"
+
+        response = @http_client.get([:shared_configs, shared_config_id, :config_files, query_string].compact)
 
         assert_response_status(response, 200)
 
