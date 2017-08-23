@@ -61,7 +61,10 @@ class SemaphoreClient
       end
 
       def list_for_org!(org_id, query = nil)
-        query_string = query.nil? ? nil : "?#{query}"
+        query_string =
+          unless query.nil? || query.empty?
+            "?" + query.map { |key, value| "#{key}=#{value}" }.join("&")
+          end
 
         response = @http_client.get([:orgs, org_id, :shared_configs, query_string].compact)
 
@@ -85,7 +88,10 @@ class SemaphoreClient
       end
 
       def list_for_team!(team_id, query = nil)
-        query_string = query.nil? ? nil : "?#{query}"
+        query_string =
+          unless query.nil? || query.empty?
+            "?" + query.map { |key, value| "#{key}=#{value}" }.join("&")
+          end
 
         response = @http_client.get([:teams, team_id, :shared_configs, query_string].compact)
 
@@ -111,7 +117,10 @@ class SemaphoreClient
       end
 
       def list_for_project!(project_id, query = nil)
-        query_string = query.nil? ? nil : "?#{query}"
+        query_string =
+          unless query.nil? || query.empty?
+            "?" + query.map { |key, value| "#{key}=#{value}" }.join("&")
+          end
 
         response = @http_client.get([:projects, project_id, :shared_configs, query_string].compact)
 
