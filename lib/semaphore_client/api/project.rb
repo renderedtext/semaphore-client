@@ -10,6 +10,11 @@ class SemaphoreClient
       rescue SemaphoreClient::Exceptions::RequestFailed
       end
 
+      def create_for_org(org_id, params)
+        create_for_org!(org_id, params)
+      rescue SemaphoreClient::Exceptions::RequestFailed
+      end
+
       def list_for_team(team_id, query = nil)
         list_for_team!(team_id, query)
       rescue SemaphoreClient::Exceptions::RequestFailed
@@ -45,6 +50,16 @@ class SemaphoreClient
         content.map do |entity|
           SemaphoreClient::Model::Project.load(entity)
         end
+      end
+
+      def create_for_org!(org_id, params)
+        response = @http_client.post([:orgs, org_id, :projects], params.to_json)
+
+        assert_response_status(response, 200)
+
+        content = JSON.parse(response.body)
+
+        SemaphoreClient::Model::Project.load(content)
       end
 
       def list_for_team!(team_id, query = nil)
