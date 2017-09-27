@@ -5,179 +5,152 @@ class SemaphoreClient
         @http_client = http_client
       end
 
-      def list_for_org(org_id, query = nil)
-        list_for_org!(org_id, query)
-      rescue SemaphoreClient::Exceptions::RequestFailed
+
+      def list_for_org(org_id, params = nil, options = {})
+        list_for_org!(org_id, params, options)
+      rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def create_for_org(org_id, params)
-        create_for_org!(org_id, params)
-      rescue SemaphoreClient::Exceptions::RequestFailed
+      def list_for_org!(org_id, params = nil, options = {})
+        path = "/orgs/#{org_id}/shared_configs"
+
+        @http_client.get(path, params, options = {}).body.map { |e| SemaphoreClient::Model::SharedConfig.load(e) }
       end
 
-      def list_for_team(team_id, query = nil)
-        list_for_team!(team_id, query)
-      rescue SemaphoreClient::Exceptions::RequestFailed
+
+
+      def create_for_org(org_id, params = nil, options = {})
+        create_for_org!(org_id, params, options)
+      rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def attach_to_team(shared_config_id, team_id)
-        attach_to_team!(shared_config_id, team_id)
-      rescue SemaphoreClient::Exceptions::RequestFailed
+      def create_for_org!(org_id, params = nil, options = {})
+        path = "/orgs/#{org_id}/shared_configs"
+        response = @http_client.post(path, params, options)
+
+        SemaphoreClient::Model::SharedConfig.load(response.body)
       end
 
-      def detach_from_team(shared_config_id, team_id)
-        detach_from_team!(shared_config_id, team_id)
-      rescue SemaphoreClient::Exceptions::RequestFailed
+
+
+      def list_for_team(team_id, params = nil, options = {})
+        list_for_team!(team_id, params, options)
+      rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def list_for_project(project_id, query = nil)
-        list_for_project!(project_id, query)
-      rescue SemaphoreClient::Exceptions::RequestFailed
+      def list_for_team!(team_id, params = nil, options = {})
+        path = "/teams/#{team_id}/shared_configs"
+
+        @http_client.get(path, params, options = {}).body.map { |e| SemaphoreClient::Model::SharedConfig.load(e) }
       end
 
-      def attach_to_project(shared_config_id, project_id)
-        attach_to_project!(shared_config_id, project_id)
-      rescue SemaphoreClient::Exceptions::RequestFailed
+
+
+      def attach_to_team(shared_config_id, team_id, params = nil, options = {})
+        attach_to_team!(shared_config_id, team_id, params, options)
+      rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def detach_from_project(shared_config_id, project_id)
-        detach_from_project!(shared_config_id, project_id)
-      rescue SemaphoreClient::Exceptions::RequestFailed
+      def attach_to_team!(shared_config_id, team_id, params = nil, options = {})
+        path = "/teams/#{team_id}/shared_configs/#{shared_config_id}"
+
+        @http_client.post(path, params, options)
       end
 
-      def get(id)
-        get!(id)
-      rescue SemaphoreClient::Exceptions::RequestFailed
+
+
+      def detach_from_team(shared_config_id, team_id, params = nil, options = {})
+        detach_from_team!(shared_config_id, team_id, params, options)
+      rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def delete(id)
-        delete!(id)
-      rescue SemaphoreClient::Exceptions::RequestFailed
+      def detach_from_team!(shared_config_id, team_id, params = nil, options = {})
+        path = "/teams/#{team_id}/shared_configs/#{shared_config_id}"
+
+        @http_client.delete(path, params, options)
       end
 
-      def update(id, params)
-        update!(id, params)
-      rescue SemaphoreClient::Exceptions::RequestFailed
+
+
+      def list_for_project(project_id, params = nil, options = {})
+        list_for_project!(project_id, params, options)
+      rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def list_for_org!(org_id, query = nil)
-        query_string =
-          unless query.nil? || query.empty?
-            "?" + query.map { |key, value| "#{key}=#{value}" }.join("&")
-          end
+      def list_for_project!(project_id, params = nil, options = {})
+        path = "/projects/#{project_id}/shared_configs"
 
-        response = @http_client.get([:orgs, org_id, :shared_configs, query_string].compact)
-
-        assert_response_status(response, 200)
-
-        content = JSON.parse(response.body)
-
-        content.map do |entity|
-          SemaphoreClient::Model::SharedConfig.load(entity)
-        end
+        @http_client.get(path, params, options = {}).body.map { |e| SemaphoreClient::Model::SharedConfig.load(e) }
       end
 
-      def create_for_org!(org_id, params)
-        response = @http_client.post([:orgs, org_id, :shared_configs], params.to_json)
 
-        assert_response_status(response, 200)
 
-        content = JSON.parse(response.body)
-
-        SemaphoreClient::Model::SharedConfig.load(content)
+      def attach_to_project(shared_config_id, project_id, params = nil, options = {})
+        attach_to_project!(shared_config_id, project_id, params, options)
+      rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def list_for_team!(team_id, query = nil)
-        query_string =
-          unless query.nil? || query.empty?
-            "?" + query.map { |key, value| "#{key}=#{value}" }.join("&")
-          end
+      def attach_to_project!(shared_config_id, project_id, params = nil, options = {})
+        path = "/projects/#{project_id}/shared_configs/#{shared_config_id}"
 
-        response = @http_client.get([:teams, team_id, :shared_configs, query_string].compact)
-
-        assert_response_status(response, 200)
-
-        content = JSON.parse(response.body)
-
-        content.map do |entity|
-          SemaphoreClient::Model::SharedConfig.load(entity)
-        end
+        @http_client.post(path, params, options)
       end
 
-      def attach_to_team!(shared_config_id, team_id)
-        response = @http_client.post([:teams, team_id, :shared_configs, shared_config_id])
 
-        assert_response_status(response, 204)
+
+      def detach_from_project(shared_config_id, project_id, params = nil, options = {})
+        detach_from_project!(shared_config_id, project_id, params, options)
+      rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def detach_from_team!(shared_config_id, team_id)
-        response = @http_client.delete([:teams, team_id, :shared_configs, shared_config_id])
+      def detach_from_project!(shared_config_id, project_id, params = nil, options = {})
+        path = "/projects/#{project_id}/shared_configs/#{shared_config_id}"
 
-        assert_response_status(response, 204)
+        @http_client.delete(path, params, options)
       end
 
-      def list_for_project!(project_id, query = nil)
-        query_string =
-          unless query.nil? || query.empty?
-            "?" + query.map { |key, value| "#{key}=#{value}" }.join("&")
-          end
 
-        response = @http_client.get([:projects, project_id, :shared_configs, query_string].compact)
 
-        assert_response_status(response, 200)
-
-        content = JSON.parse(response.body)
-
-        content.map do |entity|
-          SemaphoreClient::Model::SharedConfig.load(entity)
-        end
+      def get(id, params = nil, options = {})
+        get!(id, params, options)
+      rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def attach_to_project!(shared_config_id, project_id)
-        response = @http_client.post([:projects, project_id, :shared_configs, shared_config_id])
+      def get!(id, params = nil, options = {})
+        path = "/shared_configs/#{id}"
+        response = @http_client.get(path, params = {})
 
-        assert_response_status(response, 204)
+        SemaphoreClient::Model::SharedConfig.load(response.body)
       end
 
-      def detach_from_project!(shared_config_id, project_id)
-        response = @http_client.delete([:projects, project_id, :shared_configs, shared_config_id])
 
-        assert_response_status(response, 204)
+
+      def delete(id, params = nil, options = {})
+        delete!(id, params, options)
+      rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def get!(id)
-        response = @http_client.get([:shared_configs, id])
+      def delete!(id, params = nil, options = {})
+        path = "/shared_configs/#{id}"
 
-        assert_response_status(response, 200)
-
-        content = JSON.parse(response.body)
-
-        SemaphoreClient::Model::SharedConfig.load(content)
+        @http_client.delete(path, params)
       end
 
-      def delete!(id)
-        response = @http_client.delete([:shared_configs, id])
 
-        assert_response_status(response, 200)
+
+      def update(id, params = nil, options = {})
+        update!(id, params, options)
+      rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def update!(id, params)
-        response = @http_client.patch([:shared_configs, id], params.to_json)
+      def update!(id, params = nil, options = {})
+        path = "/shared_configs/#{id}"
+        response = @http_client.patch(path, params)
 
-        assert_response_status(response, 200)
-
-        content = JSON.parse(response.body)
-
-        SemaphoreClient::Model::SharedConfig.load(content)
+        SemaphoreClient::Model::SharedConfig.load(response.body)
       end
 
-      private
 
-      def assert_response_status(response, expected_status)
-        return if response.status == expected_status
-
-        raise SemaphoreClient::Exceptions::RequestFailed, response.status
-      end
     end
   end
 end

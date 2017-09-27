@@ -5,101 +5,71 @@ class SemaphoreClient
         @http_client = http_client
       end
 
-      def list_for_org(org_id, query = nil)
-        list_for_org!(org_id, query)
-      rescue SemaphoreClient::Exceptions::RequestFailed
+
+      def list_for_org(org_id, params = nil, options = {})
+        list_for_org!(org_id, params, options)
+      rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def list_for_team(team_id, query = nil)
-        list_for_team!(team_id, query)
-      rescue SemaphoreClient::Exceptions::RequestFailed
+      def list_for_org!(org_id, params = nil, options = {})
+        path = "/orgs/#{org_id}/users"
+
+        @http_client.get(path, params, options = {}).body.map { |e| SemaphoreClient::Model::User.load(e) }
       end
 
-      def attach_to_team(user_id, team_id)
-        attach_to_team!(user_id, team_id)
-      rescue SemaphoreClient::Exceptions::RequestFailed
+
+
+      def list_for_team(team_id, params = nil, options = {})
+        list_for_team!(team_id, params, options)
+      rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def detach_from_team(user_id, team_id)
-        detach_from_team!(user_id, team_id)
-      rescue SemaphoreClient::Exceptions::RequestFailed
+      def list_for_team!(team_id, params = nil, options = {})
+        path = "/teams/#{team_id}/users"
+
+        @http_client.get(path, params, options = {}).body.map { |e| SemaphoreClient::Model::User.load(e) }
       end
 
-      def list_for_project(project_id, query = nil)
-        list_for_project!(project_id, query)
-      rescue SemaphoreClient::Exceptions::RequestFailed
+
+
+      def attach_to_team(user_id, team_id, params = nil, options = {})
+        attach_to_team!(user_id, team_id, params, options)
+      rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def list_for_org!(org_id, query = nil)
-        query_string =
-          unless query.nil? || query.empty?
-            "?" + query.map { |key, value| "#{key}=#{value}" }.join("&")
-          end
+      def attach_to_team!(user_id, team_id, params = nil, options = {})
+        path = "/teams/#{team_id}/users/#{user_id}"
 
-        response = @http_client.get([:orgs, org_id, :users, query_string].compact)
-
-        assert_response_status(response, 200)
-
-        content = JSON.parse(response.body)
-
-        content.map do |entity|
-          SemaphoreClient::Model::User.load(entity)
-        end
+        @http_client.post(path, params, options)
       end
 
-      def list_for_team!(team_id, query = nil)
-        query_string =
-          unless query.nil? || query.empty?
-            "?" + query.map { |key, value| "#{key}=#{value}" }.join("&")
-          end
 
-        response = @http_client.get([:teams, team_id, :users, query_string].compact)
 
-        assert_response_status(response, 200)
-
-        content = JSON.parse(response.body)
-
-        content.map do |entity|
-          SemaphoreClient::Model::User.load(entity)
-        end
+      def detach_from_team(user_id, team_id, params = nil, options = {})
+        detach_from_team!(user_id, team_id, params, options)
+      rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def attach_to_team!(user_id, team_id)
-        response = @http_client.post([:teams, team_id, :users, user_id])
+      def detach_from_team!(user_id, team_id, params = nil, options = {})
+        path = "/teams/#{team_id}/users/#{user_id}"
 
-        assert_response_status(response, 204)
+        @http_client.delete(path, params, options)
       end
 
-      def detach_from_team!(user_id, team_id)
-        response = @http_client.delete([:teams, team_id, :users, user_id])
 
-        assert_response_status(response, 204)
+
+      def list_for_project(project_id, params = nil, options = {})
+        list_for_project!(project_id, params, options)
+      rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def list_for_project!(project_id, query = nil)
-        query_string =
-          unless query.nil? || query.empty?
-            "?" + query.map { |key, value| "#{key}=#{value}" }.join("&")
-          end
+      def list_for_project!(project_id, params = nil, options = {})
+        path = "/projects/#{project_id}/users"
 
-        response = @http_client.get([:projects, project_id, :users, query_string].compact)
-
-        assert_response_status(response, 200)
-
-        content = JSON.parse(response.body)
-
-        content.map do |entity|
-          SemaphoreClient::Model::User.load(entity)
-        end
+        @http_client.get(path, params, options = {}).body.map { |e| SemaphoreClient::Model::User.load(e) }
       end
 
-      private
 
-      def assert_response_status(response, expected_status)
-        return if response.status == expected_status
-
-        raise SemaphoreClient::Exceptions::RequestFailed, response.status
-      end
     end
   end
 end

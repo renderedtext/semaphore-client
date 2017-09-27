@@ -1,87 +1,107 @@
 class SemaphoreClient
-  class HttpClient
-    class RouteNotSupported < StandardError; end
 
-    def initialize(auth_token, api_url, api_version, verbose, logger)
+  class HttpClient
+
+    class ResponseErrorMiddleware < Faraday::Middleware
+      def call(env)
+        @app.call(env).on_complete do |env|
+          case env[:status]
+          when 401
+            raise SemaphoreClient::Exceptions::Unauthorized, env
+          when 404
+            raise SemaphoreClient::Exceptions::NotFound, env
+          when 405
+            raise SemaphoreClient::Exceptions::NotAllowed, env
+          when 409
+            raise SemaphoreClient::Exceptions::Conflict, env
+          when 422
+            raise SemaphoreClient::Exceptions::UnprocessableEntity, env
+          when 400...500
+            raise SemaphoreClient::Exceptions::BadRequest, env
+          when 500...600
+            raise SemaphoreClient::Exceptions::ServerError, env
+          end
+        end
+      end
+    end
+
+    def initialize(auth_token, api_url, api_version, verbose, logger, auto_paginate)
       @auth_token = auth_token
       @api_url = api_url
       @api_version = api_version
       @verbose = verbose
       @logger = logger
+      @auto_paginate = auto_paginate
     end
 
-    def get(route_elements)
-      route = route(route_elements)
-
-      trace("GET", route) do
-        connection.get(route)
-      end
+    def get(path, params = nil, options = {})
+      api_call(:get, path, params, options)
     end
 
-    def post(route_elements, content = nil)
-      route = route(route_elements)
-
-      if content
-        trace("POST", route, content) do
-          connection.post(route, content)
-        end
-      else
-        trace("POST", route) do
-          connection.post(route)
-        end
-      end
+    def post(path, params = nil, options = {})
+      api_call(:post, path, params, options)
     end
 
-    def patch(route_elements, content = nil)
-      route = route(route_elements)
-
-      if content
-        trace("PATCH", route, content) do
-          connection.patch(route, content)
-        end
-      else
-        trace("PATCH", route) do
-          connection.patch(route)
-        end
-      end
+    def patch(path, params = nil, options = {})
+      api_call(:patch, path, params, options)
     end
 
-    def delete(route_elements)
-      route = route(route_elements)
-
-      trace("DELETE", route) do
-        connection.delete(route)
-      end
+    def delete(path, params = nil, options = {})
+      api_call(:delete, path, params, options)
     end
 
     private
 
-    def trace(method, path, content = nil)
-      if @verbose == true
-        id = SecureRandom.hex
-        started_at = Time.now.to_f
+    def api_call(method, path, params = nil, options = {})
+      response = connection.public_send(method, "/#{@api_version}/#{path}", params)
 
-        @logger.info "#{id} #{method} #{path} body: #{content.inspect}"
-        response = yield
+      if auto_paginate?(options)
+        links = parse_links(response)
 
-        finished_at = Time.now.to_f
-        @logger.info "#{id} #{response.status} duration: #{finished_at - started_at}s body: #{response.body}"
+        if links[:next]
+          # recursivly follow the :next link
+          next_response = api_call(method, links[:next], params, options)
 
-        response
-      else
-        yield
+          # append the rest to the body of the original request
+          response.body.concat(next_response.body)
+        end
       end
+
+      response
     end
 
-    def route(route_elements)
-      ["", @api_version, *route_elements].compact.join("/")
+    def auto_paginate?(options)
+      # first check the options, then the global settings
+      options.key?(:auto_paginate) ? options[:auto_paginate] : @auto_paginate
+    end
+
+    def parse_links(response)
+      links = ( response.headers["Link"] || "" ).split(', ').map do |link|
+        href, name = link.match(/<(.*?)>; rel="(\w+)"/).captures
+
+        [name.to_sym, href.gsub("#{@api_url}/v2", "")]
+      end
+
+      Hash[*links.flatten]
     end
 
     def connection
-      @connection ||= Faraday.new(
-        :url => @api_url,
-        :headers => { "Authorization" => "Token #{@auth_token}" }
-      )
+      @connection ||= Faraday.new(:url => @api_url, :headers => headers) do |conn|
+        conn.request :json
+        conn.response :json
+
+        if @verbose
+          conn.response :logger, @logger, :headers => false, :bodies => true
+        end
+
+        conn.use SemaphoreClient::HttpClient::ResponseErrorMiddleware
+
+        conn.adapter Faraday.default_adapter
+      end
+    end
+
+    def headers
+      { "Authorization" => "Token #{@auth_token}" }
     end
   end
 end

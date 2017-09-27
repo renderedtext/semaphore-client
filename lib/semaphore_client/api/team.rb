@@ -5,135 +5,100 @@ class SemaphoreClient
         @http_client = http_client
       end
 
-      def list_for_org(org_id, query = nil)
-        list_for_org!(org_id, query)
-      rescue SemaphoreClient::Exceptions::RequestFailed
+
+      def list_for_org(org_id, params = nil, options = {})
+        list_for_org!(org_id, params, options)
+      rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def create_for_org(org_id, params)
-        create_for_org!(org_id, params)
-      rescue SemaphoreClient::Exceptions::RequestFailed
+      def list_for_org!(org_id, params = nil, options = {})
+        path = "/orgs/#{org_id}/teams"
+
+        @http_client.get(path, params, options = {}).body.map { |e| SemaphoreClient::Model::Team.load(e) }
       end
 
-      def get(id)
-        get!(id)
-      rescue SemaphoreClient::Exceptions::RequestFailed
+
+
+      def create_for_org(org_id, params = nil, options = {})
+        create_for_org!(org_id, params, options)
+      rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def delete(id)
-        delete!(id)
-      rescue SemaphoreClient::Exceptions::RequestFailed
+      def create_for_org!(org_id, params = nil, options = {})
+        path = "/orgs/#{org_id}/teams"
+        response = @http_client.post(path, params, options)
+
+        SemaphoreClient::Model::Team.load(response.body)
       end
 
-      def update(id, params)
-        update!(id, params)
-      rescue SemaphoreClient::Exceptions::RequestFailed
+
+
+      def get(id, params = nil, options = {})
+        get!(id, params, options)
+      rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def list_for_project(project_id, query = nil)
-        list_for_project!(project_id, query)
-      rescue SemaphoreClient::Exceptions::RequestFailed
+      def get!(id, params = nil, options = {})
+        path = "/teams/#{id}"
+        response = @http_client.get(path, params = {})
+
+        SemaphoreClient::Model::Team.load(response.body)
       end
 
-      def list_for_shared_config(shared_config_id, query = nil)
-        list_for_shared_config!(shared_config_id, query)
-      rescue SemaphoreClient::Exceptions::RequestFailed
+
+
+      def delete(id, params = nil, options = {})
+        delete!(id, params, options)
+      rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def list_for_org!(org_id, query = nil)
-        query_string =
-          unless query.nil? || query.empty?
-            "?" + query.map { |key, value| "#{key}=#{value}" }.join("&")
-          end
+      def delete!(id, params = nil, options = {})
+        path = "/teams/#{id}"
 
-        response = @http_client.get([:orgs, org_id, :teams, query_string].compact)
-
-        assert_response_status(response, 200)
-
-        content = JSON.parse(response.body)
-
-        content.map do |entity|
-          SemaphoreClient::Model::Team.load(entity)
-        end
+        @http_client.delete(path, params)
       end
 
-      def create_for_org!(org_id, params)
-        response = @http_client.post([:orgs, org_id, :teams], params.to_json)
 
-        assert_response_status(response, 200)
 
-        content = JSON.parse(response.body)
-
-        SemaphoreClient::Model::Team.load(content)
+      def update(id, params = nil, options = {})
+        update!(id, params, options)
+      rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def get!(id)
-        response = @http_client.get([:teams, id])
+      def update!(id, params = nil, options = {})
+        path = "/teams/#{id}"
+        response = @http_client.patch(path, params)
 
-        assert_response_status(response, 200)
-
-        content = JSON.parse(response.body)
-
-        SemaphoreClient::Model::Team.load(content)
+        SemaphoreClient::Model::Team.load(response.body)
       end
 
-      def delete!(id)
-        response = @http_client.delete([:teams, id])
 
-        assert_response_status(response, 200)
+
+      def list_for_project(project_id, params = nil, options = {})
+        list_for_project!(project_id, params, options)
+      rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def update!(id, params)
-        response = @http_client.patch([:teams, id], params.to_json)
+      def list_for_project!(project_id, params = nil, options = {})
+        path = "/projects/#{project_id}/teams"
 
-        assert_response_status(response, 200)
-
-        content = JSON.parse(response.body)
-
-        SemaphoreClient::Model::Team.load(content)
+        @http_client.get(path, params, options = {}).body.map { |e| SemaphoreClient::Model::Team.load(e) }
       end
 
-      def list_for_project!(project_id, query = nil)
-        query_string =
-          unless query.nil? || query.empty?
-            "?" + query.map { |key, value| "#{key}=#{value}" }.join("&")
-          end
 
-        response = @http_client.get([:projects, project_id, :teams, query_string].compact)
 
-        assert_response_status(response, 200)
-
-        content = JSON.parse(response.body)
-
-        content.map do |entity|
-          SemaphoreClient::Model::Team.load(entity)
-        end
+      def list_for_shared_config(shared_config_id, params = nil, options = {})
+        list_for_shared_config!(shared_config_id, params, options)
+      rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def list_for_shared_config!(shared_config_id, query = nil)
-        query_string =
-          unless query.nil? || query.empty?
-            "?" + query.map { |key, value| "#{key}=#{value}" }.join("&")
-          end
+      def list_for_shared_config!(shared_config_id, params = nil, options = {})
+        path = "/shared_configs/#{shared_config_id}/teams"
 
-        response = @http_client.get([:shared_configs, shared_config_id, :teams, query_string].compact)
-
-        assert_response_status(response, 200)
-
-        content = JSON.parse(response.body)
-
-        content.map do |entity|
-          SemaphoreClient::Model::Team.load(entity)
-        end
+        @http_client.get(path, params, options = {}).body.map { |e| SemaphoreClient::Model::Team.load(e) }
       end
 
-      private
 
-      def assert_response_status(response, expected_status)
-        return if response.status == expected_status
-
-        raise SemaphoreClient::Exceptions::RequestFailed, response.status
-      end
     end
   end
 end
