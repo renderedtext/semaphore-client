@@ -25,11 +25,10 @@ class SemaphoreClient
       end
     end
 
-    def initialize(auth_token, api_url, api_version, verbose, logger, auto_paginate)
+    def initialize(auth_token, api_url, api_version, logger, auto_paginate)
       @auth_token = auth_token
       @api_url = api_url
       @api_version = api_version
-      @verbose = verbose
       @logger = logger
       @auto_paginate = auto_paginate
     end
@@ -90,11 +89,11 @@ class SemaphoreClient
         conn.request :json
         conn.response :json
 
-        if @verbose
+        conn.use SemaphoreClient::HttpClient::ResponseErrorMiddleware
+
+        if @logger
           conn.response :logger, @logger, :headers => false, :bodies => true
         end
-
-        conn.use SemaphoreClient::HttpClient::ResponseErrorMiddleware
 
         conn.adapter Faraday.default_adapter
       end
