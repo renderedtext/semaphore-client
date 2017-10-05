@@ -1,5 +1,7 @@
 class SemaphoreClient
   class Exceptions
+    ApiError = Struct.new(:resource, :field, :code)
+
     class Base < StandardError; end
 
     class AttributeNotAvailable < Base; end
@@ -30,7 +32,11 @@ class SemaphoreClient
     class Conflict < ResponseError; end
 
     # 422
-    class UnprocessableEntity < ResponseError; end
+    class UnprocessableEntity < ResponseError
+      def errors
+        JSON.parse(@env[:body])["erorrs"].map { |error| ApiError.new(error) }
+      end
+    end
 
     # 500+
     class ServerError < ResponseError; end

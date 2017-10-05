@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    semaphore_client (2.4.0)
+    semaphore_client (2.5.0)
       faraday
 
 GEM
