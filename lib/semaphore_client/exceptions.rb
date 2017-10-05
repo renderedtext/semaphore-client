@@ -34,7 +34,9 @@ class SemaphoreClient
     # 422
     class UnprocessableEntity < ResponseError
       def errors
-        JSON.parse(@env[:body])["erorrs"].map { |error| ApiError.new(error) }
+        JSON.parse(@env[:body])["errors"].map do |error|
+          ApiError.new(error["resource"], error["field"], error["code"])
+        end
       end
     end
 
