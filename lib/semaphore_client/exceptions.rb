@@ -20,7 +20,11 @@ class SemaphoreClient
       end
 
       def message
-        JSON.parse(@env[:body])["message"]
+        body["message"] if body.is_a?(Hash)
+      end
+
+      def body
+        JSON.parse(@env[:body])
       end
     end
 
