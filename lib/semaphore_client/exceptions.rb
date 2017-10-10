@@ -12,7 +12,15 @@ class SemaphoreClient
       def initialize(env)
         @env = env
 
-        super(env[:message])
+        super(message)
+      end
+
+      def code
+        @env[:status]
+      end
+
+      def message
+        JSON.parse(@env[:body])["message"]
       end
     end
 
