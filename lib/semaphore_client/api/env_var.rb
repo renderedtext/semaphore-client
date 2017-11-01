@@ -45,26 +45,26 @@ class SemaphoreClient
 
 
 
-      def list_for_shared_config(shared_config_id, params = nil, options = {})
-        list_for_shared_config!(shared_config_id, params, options)
+      def list_for_secret(secret_id, params = nil, options = {})
+        list_for_secret!(secret_id, params, options)
       rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def list_for_shared_config!(shared_config_id, params = nil, options = {})
-        path = "/shared_configs/#{shared_config_id}/env_vars"
+      def list_for_secret!(secret_id, params = nil, options = {})
+        path = "/secrets/#{secret_id}/env_vars"
 
         @http_client.get(path, params, options = {}).body.map { |e| SemaphoreClient::Model::EnvVar.load(e) }
       end
 
 
 
-      def create_for_shared_config(shared_config_id, params = nil, options = {})
-        create_for_shared_config!(shared_config_id, params, options)
+      def create_for_secret(secret_id, params = nil, options = {})
+        create_for_secret!(secret_id, params, options)
       rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def create_for_shared_config!(shared_config_id, params = nil, options = {})
-        path = "/shared_configs/#{shared_config_id}/env_vars"
+      def create_for_secret!(secret_id, params = nil, options = {})
+        path = "/secrets/#{secret_id}/env_vars"
         response = @http_client.post(path, params, options)
 
         SemaphoreClient::Model::EnvVar.load(response.body)

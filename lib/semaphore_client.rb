@@ -11,14 +11,14 @@ require "semaphore_client/model/user"
 require "semaphore_client/model/org"
 require "semaphore_client/model/team"
 require "semaphore_client/model/project"
-require "semaphore_client/model/shared_config"
+require "semaphore_client/model/secret"
 require "semaphore_client/model/env_var"
 require "semaphore_client/model/config_file"
 require "semaphore_client/api/user"
 require "semaphore_client/api/org"
 require "semaphore_client/api/team"
 require "semaphore_client/api/project"
-require "semaphore_client/api/shared_config"
+require "semaphore_client/api/secret"
 require "semaphore_client/api/env_var"
 require "semaphore_client/api/config_file"
 
@@ -51,8 +51,8 @@ class SemaphoreClient
     @project_api ||= SemaphoreClient::Api::Project.new(http_client)
   end
 
-  def shared_configs
-    @shared_config_api ||= SemaphoreClient::Api::SharedConfig.new(http_client)
+  def secrets
+    @secret_api ||= SemaphoreClient::Api::Secret.new(http_client)
   end
 
   def env_vars

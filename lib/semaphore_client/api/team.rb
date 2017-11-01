@@ -87,13 +87,13 @@ class SemaphoreClient
 
 
 
-      def list_for_shared_config(shared_config_id, params = nil, options = {})
-        list_for_shared_config!(shared_config_id, params, options)
+      def list_for_secret(secret_id, params = nil, options = {})
+        list_for_secret!(secret_id, params, options)
       rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def list_for_shared_config!(shared_config_id, params = nil, options = {})
-        path = "/shared_configs/#{shared_config_id}/teams"
+      def list_for_secret!(secret_id, params = nil, options = {})
+        path = "/secrets/#{secret_id}/teams"
 
         @http_client.get(path, params, options = {}).body.map { |e| SemaphoreClient::Model::Team.load(e) }
       end

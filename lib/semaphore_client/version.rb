@@ -1,3 +1,3 @@
 class SemaphoreClient
-  VERSION = "2.8.1"
+  VERSION = "3.0.0"
 end

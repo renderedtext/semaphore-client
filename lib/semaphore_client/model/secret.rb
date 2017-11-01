@@ -1,6 +1,6 @@
 class SemaphoreClient
   module Model
-    class SharedConfig
+    class Secret
       attr_reader :projects_url, :teams_url, :config_files_url, :updated_at, :env_vars_url, :id, :url, :created_at
       attr_accessor :name, :description
 

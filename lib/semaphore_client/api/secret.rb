@@ -1,6 +1,6 @@
 class SemaphoreClient
   module Api
-    class SharedConfig
+    class Secret
       def initialize(http_client)
         @http_client = http_client
       end
@@ -12,9 +12,9 @@ class SemaphoreClient
       end
 
       def list_for_org!(org_id, params = nil, options = {})
-        path = "/orgs/#{org_id}/shared_configs"
+        path = "/orgs/#{org_id}/secrets"
 
-        @http_client.get(path, params, options = {}).body.map { |e| SemaphoreClient::Model::SharedConfig.load(e) }
+        @http_client.get(path, params, options = {}).body.map { |e| SemaphoreClient::Model::Secret.load(e) }
       end
 
 
@@ -25,10 +25,10 @@ class SemaphoreClient
       end
 
       def create_for_org!(org_id, params = nil, options = {})
-        path = "/orgs/#{org_id}/shared_configs"
+        path = "/orgs/#{org_id}/secrets"
         response = @http_client.post(path, params, options)
 
-        SemaphoreClient::Model::SharedConfig.load(response.body)
+        SemaphoreClient::Model::Secret.load(response.body)
       end
 
 
@@ -39,33 +39,33 @@ class SemaphoreClient
       end
 
       def list_for_team!(team_id, params = nil, options = {})
-        path = "/teams/#{team_id}/shared_configs"
+        path = "/teams/#{team_id}/secrets"
 
-        @http_client.get(path, params, options = {}).body.map { |e| SemaphoreClient::Model::SharedConfig.load(e) }
+        @http_client.get(path, params, options = {}).body.map { |e| SemaphoreClient::Model::Secret.load(e) }
       end
 
 
 
-      def attach_to_team(shared_config_id, team_id, params = nil, options = {})
-        attach_to_team!(shared_config_id, team_id, params, options)
+      def attach_to_team(secret_id, team_id, params = nil, options = {})
+        attach_to_team!(secret_id, team_id, params, options)
       rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def attach_to_team!(shared_config_id, team_id, params = nil, options = {})
-        path = "/teams/#{team_id}/shared_configs/#{shared_config_id}"
+      def attach_to_team!(secret_id, team_id, params = nil, options = {})
+        path = "/teams/#{team_id}/secrets/#{secret_id}"
 
         @http_client.post(path, params, options)
       end
 
 
 
-      def detach_from_team(shared_config_id, team_id, params = nil, options = {})
-        detach_from_team!(shared_config_id, team_id, params, options)
+      def detach_from_team(secret_id, team_id, params = nil, options = {})
+        detach_from_team!(secret_id, team_id, params, options)
       rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def detach_from_team!(shared_config_id, team_id, params = nil, options = {})
-        path = "/teams/#{team_id}/shared_configs/#{shared_config_id}"
+      def detach_from_team!(secret_id, team_id, params = nil, options = {})
+        path = "/teams/#{team_id}/secrets/#{secret_id}"
 
         @http_client.delete(path, params, options)
       end
@@ -78,33 +78,33 @@ class SemaphoreClient
       end
 
       def list_for_project!(project_id, params = nil, options = {})
-        path = "/projects/#{project_id}/shared_configs"
+        path = "/projects/#{project_id}/secrets"
 
-        @http_client.get(path, params, options = {}).body.map { |e| SemaphoreClient::Model::SharedConfig.load(e) }
+        @http_client.get(path, params, options = {}).body.map { |e| SemaphoreClient::Model::Secret.load(e) }
       end
 
 
 
-      def attach_to_project(shared_config_id, project_id, params = nil, options = {})
-        attach_to_project!(shared_config_id, project_id, params, options)
+      def attach_to_project(secret_id, project_id, params = nil, options = {})
+        attach_to_project!(secret_id, project_id, params, options)
       rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def attach_to_project!(shared_config_id, project_id, params = nil, options = {})
-        path = "/projects/#{project_id}/shared_configs/#{shared_config_id}"
+      def attach_to_project!(secret_id, project_id, params = nil, options = {})
+        path = "/projects/#{project_id}/secrets/#{secret_id}"
 
         @http_client.post(path, params, options)
       end
 
 
 
-      def detach_from_project(shared_config_id, project_id, params = nil, options = {})
-        detach_from_project!(shared_config_id, project_id, params, options)
+      def detach_from_project(secret_id, project_id, params = nil, options = {})
+        detach_from_project!(secret_id, project_id, params, options)
       rescue SemaphoreClient::Exceptions::ResponseError
       end
 
-      def detach_from_project!(shared_config_id, project_id, params = nil, options = {})
-        path = "/projects/#{project_id}/shared_configs/#{shared_config_id}"
+      def detach_from_project!(secret_id, project_id, params = nil, options = {})
+        path = "/projects/#{project_id}/secrets/#{secret_id}"
 
         @http_client.delete(path, params, options)
       end
@@ -117,10 +117,10 @@ class SemaphoreClient
       end
 
       def get!(id, params = nil, options = {})
-        path = "/shared_configs/#{id}"
+        path = "/secrets/#{id}"
         response = @http_client.get(path, params = {})
 
-        SemaphoreClient::Model::SharedConfig.load(response.body)
+        SemaphoreClient::Model::Secret.load(response.body)
       end
 
 
@@ -131,7 +131,7 @@ class SemaphoreClient
       end
 
       def delete!(id, params = nil, options = {})
-        path = "/shared_configs/#{id}"
+        path = "/secrets/#{id}"
 
         @http_client.delete(path, params)
       end
@@ -144,10 +144,10 @@ class SemaphoreClient
       end
 
       def update!(id, params = nil, options = {})
-        path = "/shared_configs/#{id}"
+        path = "/secrets/#{id}"
         response = @http_client.patch(path, params)
 
-        SemaphoreClient::Model::SharedConfig.load(response.body)
+        SemaphoreClient::Model::Secret.load(response.body)
       end
 
 
