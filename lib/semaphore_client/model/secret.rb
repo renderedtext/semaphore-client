@@ -1,7 +1,7 @@
 class SemaphoreClient
   module Model
     class Secret
-      attr_reader :projects_url, :teams_url, :config_files_url, :updated_at, :env_vars_url, :id, :url, :created_at
+      attr_reader :id, :url, :projects_url, :teams_url, :env_vars_url, :config_files_url, :created_at, :updated_at
       attr_accessor :name, :description
 
       def self.load(attributes)
@@ -15,16 +15,16 @@ class SemaphoreClient
       def load(attributes)
         attributes = symbolize_keys(attributes)
 
-        @description = attributes[:description] if attributes.key?(:description)
-        @projects_url = attributes[:projects_url] if attributes.key?(:projects_url)
-        @teams_url = attributes[:teams_url] if attributes.key?(:teams_url)
         @name = attributes[:name] if attributes.key?(:name)
-        @config_files_url = attributes[:config_files_url] if attributes.key?(:config_files_url)
-        @updated_at = attributes[:updated_at] if attributes.key?(:updated_at)
-        @env_vars_url = attributes[:env_vars_url] if attributes.key?(:env_vars_url)
+        @description = attributes[:description] if attributes.key?(:description)
         @id = attributes[:id] if attributes.key?(:id)
         @url = attributes[:url] if attributes.key?(:url)
+        @projects_url = attributes[:projects_url] if attributes.key?(:projects_url)
+        @teams_url = attributes[:teams_url] if attributes.key?(:teams_url)
+        @env_vars_url = attributes[:env_vars_url] if attributes.key?(:env_vars_url)
+        @config_files_url = attributes[:config_files_url] if attributes.key?(:config_files_url)
         @created_at = attributes[:created_at] if attributes.key?(:created_at)
+        @updated_at = attributes[:updated_at] if attributes.key?(:updated_at)
 
         self
       end

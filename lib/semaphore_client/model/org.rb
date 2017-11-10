@@ -1,7 +1,7 @@
 class SemaphoreClient
   module Model
     class Org
-      attr_reader :projects_url, :teams_url, :name, :secrets_url, :username, :updated_at, :id, :url, :users_url, :created_at
+      attr_reader :id, :name, :url, :projects_url, :secrets_url, :users_url, :teams_url, :username, :created_at, :updated_at
 
       def self.load(attributes)
         new.load(attributes)
@@ -14,16 +14,16 @@ class SemaphoreClient
       def load(attributes)
         attributes = symbolize_keys(attributes)
 
-        @projects_url = attributes[:projects_url] if attributes.key?(:projects_url)
-        @teams_url = attributes[:teams_url] if attributes.key?(:teams_url)
-        @name = attributes[:name] if attributes.key?(:name)
-        @secrets_url = attributes[:secrets_url] if attributes.key?(:secrets_url)
-        @username = attributes[:username] if attributes.key?(:username)
-        @updated_at = attributes[:updated_at] if attributes.key?(:updated_at)
         @id = attributes[:id] if attributes.key?(:id)
+        @name = attributes[:name] if attributes.key?(:name)
         @url = attributes[:url] if attributes.key?(:url)
+        @projects_url = attributes[:projects_url] if attributes.key?(:projects_url)
+        @secrets_url = attributes[:secrets_url] if attributes.key?(:secrets_url)
         @users_url = attributes[:users_url] if attributes.key?(:users_url)
+        @teams_url = attributes[:teams_url] if attributes.key?(:teams_url)
+        @username = attributes[:username] if attributes.key?(:username)
         @created_at = attributes[:created_at] if attributes.key?(:created_at)
+        @updated_at = attributes[:updated_at] if attributes.key?(:updated_at)
 
         self
       end
