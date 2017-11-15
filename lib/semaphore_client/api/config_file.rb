@@ -19,32 +19,6 @@ class SemaphoreClient
 
 
 
-      def attach_to_project(config_file_id, project_id, params = nil, options = {})
-        attach_to_project!(config_file_id, project_id, params, options)
-      rescue SemaphoreClient::Exceptions::ResponseError
-      end
-
-      def attach_to_project!(config_file_id, project_id, params = nil, options = {})
-        path = "/projects/#{project_id}/config_files/#{config_file_id}"
-
-        @http_client.post(path, params, options)
-      end
-
-
-
-      def detach_from_project(config_file_id, project_id, params = nil, options = {})
-        detach_from_project!(config_file_id, project_id, params, options)
-      rescue SemaphoreClient::Exceptions::ResponseError
-      end
-
-      def detach_from_project!(config_file_id, project_id, params = nil, options = {})
-        path = "/projects/#{project_id}/config_files/#{config_file_id}"
-
-        @http_client.delete(path, params, options)
-      end
-
-
-
       def list_for_secret(secret_id, params = nil, options = {})
         list_for_secret!(secret_id, params, options)
       rescue SemaphoreClient::Exceptions::ResponseError
