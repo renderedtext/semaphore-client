@@ -1,7 +1,7 @@
 class SemaphoreClient
   module Model
     class Project
-      attr_reader :id, :name, :users_url, :secrets_url, :updated_at, :created_at
+      attr_reader :id, :name, :html_url, :users_url, :secrets_url, :updated_at, :created_at
 
       def self.load(attributes)
         new.load(attributes)
@@ -16,6 +16,7 @@ class SemaphoreClient
 
         @id = attributes[:id] if attributes.key?(:id)
         @name = attributes[:name] if attributes.key?(:name)
+        @html_url = attributes[:html_url] if attributes.key?(:html_url)
         @users_url = attributes[:users_url] if attributes.key?(:users_url)
         @secrets_url = attributes[:secrets_url] if attributes.key?(:secrets_url)
         @updated_at = attributes[:updated_at] if attributes.key?(:updated_at)
