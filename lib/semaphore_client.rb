@@ -14,6 +14,7 @@ require "semaphore_client/model/project"
 require "semaphore_client/model/secret"
 require "semaphore_client/model/env_var"
 require "semaphore_client/model/config_file"
+require "semaphore_client/model/pipeline"
 require "semaphore_client/api/user"
 require "semaphore_client/api/org"
 require "semaphore_client/api/team"
@@ -21,6 +22,7 @@ require "semaphore_client/api/project"
 require "semaphore_client/api/secret"
 require "semaphore_client/api/env_var"
 require "semaphore_client/api/config_file"
+require "semaphore_client/api/pipeline"
 
 class SemaphoreClient
   API_URL = "https://api.semaphoreci.com"
@@ -61,6 +63,10 @@ class SemaphoreClient
 
   def config_files
     @config_file_api ||= SemaphoreClient::Api::ConfigFile.new(http_client)
+  end
+
+  def pipelines
+    @pipeline_api ||= SemaphoreClient::Api::Pipeline.new(http_client)
   end
 
   private
